@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News Article Categorization System</title>
+<style>
+:root{--navy:#101b36;--blue:#4263eb;--purple:#7950f2;--ink:#202944;--muted:#69758c;--bg:#f4f7fc;--line:#e5eaf3;--white:#fff;--green:#14866d}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+header{background:linear-gradient(115deg,#101b36,#243f79 70%,#4263eb);color:white;padding:22px max(5%,calc((100% - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px}.brand-icon{width:42px;height:42px;border-radius:13px;background:#ffffff20;display:grid;place-items:center;font-size:22px}
+nav{display:flex;gap:22px;flex-wrap:wrap}nav a{color:#e5eaff;text-decoration:none;font-size:14px;font-weight:600}nav a:hover{color:white}
+.hero{background:linear-gradient(115deg,#101b36,#243f79 70%,#4263eb);color:white;padding:50px max(5%,calc((100% - 1180px)/2)) 76px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:2px;font-weight:800;color:#bdcaff}.hero h1{font-size:clamp(32px,5vw,53px);line-height:1.1;max-width:800px;margin:15px 0}.hero p{max-width:700px;color:#e0e7ff;font-size:17px;margin:0}
+.pills{display:flex;gap:9px;flex-wrap:wrap;margin-top:23px}.pill{padding:7px 12px;border:1px solid #ffffff45;border-radius:999px;font-size:12px;color:#f1f4ff;background:#ffffff0c}
+main{max-width:1180px;margin:-35px auto 60px;padding:0 22px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}.stat,.panel{background:white;border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 28px #23345b0a}.stat{padding:20px}.stat .num{font-size:29px;font-weight:850;color:var(--navy)}.stat .label{font-size:13px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:20px;align-items:start}.panel{padding:25px;margin-bottom:20px}.panel h2{font-size:20px;margin:0 0 6px;color:var(--navy)}.sub{color:var(--muted);font-size:14px;margin:0 0 20px}
+label{display:block;font-size:13px;font-weight:750;margin:15px 0 8px}textarea{width:100%;min-height:210px;resize:vertical;border:1px solid #d9e1ef;border-radius:13px;padding:15px;font:15px/1.6 inherit;color:var(--ink);outline:none;background:#fcfdff}textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #4263eb18}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.btn{border:0;border-radius:11px;padding:11px 17px;font-size:14px;font-weight:750;cursor:pointer;transition:.15s}.btn-primary{background:var(--blue);color:white;box-shadow:0 6px 15px #4263eb30}.btn-primary:hover{background:#3451d1;transform:translateY(-1px)}.btn-secondary{background:#eef2ff;color:#3552c8}.btn-plain{background:#f1f4f9;color:#46516a}
+.samples{display:flex;gap:8px;flex-wrap:wrap}.sample{border:1px solid #dfe5f0;background:white;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:700;color:#53617c;cursor:pointer}.sample:hover{border-color:var(--blue);color:var(--blue)}
+.notice{font-size:12px;color:var(--muted);margin-top:14px}.empty{border:1px dashed #cbd5e5;border-radius:13px;padding:28px 16px;text-align:center;color:var(--muted);background:#fafcff}.empty .emoji{font-size:30px}.result-top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.category{display:inline-flex;padding:7px 12px;background:#e9f8f2;color:#08765b;border-radius:999px;font-size:13px;font-weight:800}.confidence{font-size:28px;font-weight:850;color:var(--navy)}.confidence small{font-size:12px;color:var(--muted);font-weight:600}
+.bar-row{display:grid;grid-template-columns:105px 1fr 48px;gap:10px;align-items:center;margin:13px 0;font-size:12px}.track{height:9px;border-radius:999px;background:#edf0f7;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:999px;transition:width .5s}.bar-row strong{text-align:right;font-variant-numeric:tabular-nums}
+.keyword-list{display:flex;gap:8px;flex-wrap:wrap}.keyword{padding:6px 10px;border-radius:8px;background:#eef2ff;color:#4057b7;font-size:12px;font-weight:750}.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.method{background:#f8faff;border:1px solid var(--line);padding:18px;border-radius:14px}.method .icon{font-size:22px}.method h3{font-size:15px;margin:8px 0 5px}.method p{font-size:13px;color:var(--muted);margin:0}
+.domain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.domain{padding:15px;border:1px solid var(--line);border-radius:13px}.domain b{display:block;font-size:14px}.domain span{font-size:12px;color:var(--muted)}
+footer{text-align:center;padding:28px 18px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);background:white}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.method-grid{grid-template-columns:1fr}.domain-grid{grid-template-columns:repeat(2,1fr)}.hero{padding-top:38px}}
+@media(max-width:450px){header{padding:17px 20px}nav{gap:13px}.hero{padding-left:22px;padding-right:22px}.stats{gap:9px}.stat{padding:15px}.stat .num{font-size:24px}.panel{padding:18px}.bar-row{grid-template-columns:88px 1fr 43px}.domain-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="brand-icon">📰</div><span>NewsClass<span style="color:#b9c8ff"> AI</span></span></div>
+  <nav><a href="#classifier">Classifier</a><a href="#how-it-works">How it works</a><a href="#about">About project</a></nav>
+</header>
+<section class="hero">
+  <div class="eyebrow">Machine Learning · Text Classification</div>
+  <h1>Understand the story.<br>Find its category.</h1>
+  <p>A simple news article categorization demo that uses keyword patterns to estimate which of six news domains an article belongs to.</p>
+  <div class="pills"><span class="pill">Multinomial Naive Bayes concept</span><span class="pill">6 news domains</span><span class="pill">Instant browser demo</span></div>
+</section>
+<main>
+  <section class="stats" aria-label="Project statistics">
+    <div class="stat"><div class="num">6</div><div class="label">News categories</div></div>
+    <div class="stat"><div class="num">42</div><div class="label">Sample training articles in report</div></div>
+    <div class="stat"><div class="num">265</div><div class="label">Vocabulary words in report</div></div>
+    <div class="stat"><div class="num">42.9%</div><div class="label">Reported leave-one-out accuracy</div></div>
+  </section>
+
+  <div class="layout" id="classifier">
+    <section class="panel">
+      <h2>Classify a news article</h2>
+      <p class="sub">Paste an article or try one of the sample stories below.</p>
+      <div class="samples" aria-label="Sample articles">
+        <button class="sample" data-sample="sports">⚽ Sports</button>
+        <button class="sample" data-sample="technology">💻 Technology</button>
+        <button class="sample" data-sample="business">📈 Business</button>
+        <button class="sample" data-sample="politics">🏛️ Politics</button>
+        <button class="sample" data-sample="health">🩺 Health</button>
+        <button class="sample" data-sample="entertainment">🎬 Entertainment</button>
+      </div>
+      <label for="article">Article text</label>
+      <textarea id="article" placeholder="Example: The team won the final match after the captain scored a century..."></textarea>
+      <div class="actions">
+        <button class="btn btn-primary" id="classify">Classify article →</button>
+        <button class="btn btn-secondary" id="clear">Clear text</button>
+      </div>
+      <p class="notice">Demo note: this standalone HTML uses a lightweight keyword-scoring approximation in your browser. It does not load the trained Python model from the report.</p>
+    </section>
+
+    <section class="panel" aria-live="polite">
+      <h2>Classification result</h2>
+      <p class="sub">Your predicted category and estimated score distribution.</p>
+      <div id="result">
+        <div class="empty"><div class="emoji">🔎</div><strong style="display:block;color:#293550;margin:8px 0">Ready to analyze</strong><span style="font-size:13px">Enter an article and select “Classify article”.</span></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel" id="how-it-works">
+    <h2>How the system works</h2>
+    <p class="sub">The workflow described in the project report, simplified into three stages.</p>
+    <div class="method-grid">
+      <div class="method"><div class="icon">🧹</div><h3>1. Clean the text</h3><p>Convert text to lowercase, remove punctuation and numbers, and ignore common stop-words and very short words.</p></div>
+      <div class="method"><div class="icon">🔢</div><h3>2. Count useful words</h3><p>Represent the article as bag-of-words counts and compare word patterns with the six labelled domains.</p></div>
+      <div class="method"><div class="icon">🎯</div><h3>3. Predict a domain</h3><p>Multinomial Naive Bayes combines class priors and smoothed word likelihoods to estimate the most likely category.</p></div>
+    </div>
+  </section>
+
+  <section class="panel" id="about">
+    <h2>Supported news domains</h2>
+    <p class="sub">The six categories used by the project.</p>
+    <div class="domain-grid">
+      <div class="domain">⚽ <b>Sports</b><span>Teams, matches, tournaments</span></div>
+      <div class="domain">💻 <b>Technology</b><span>AI, software, devices</span></div>
+      <div class="domain">📈 <b>Business</b><span>Markets, finance, economy</span></div>
+      <div class="domain">🏛️ <b>Politics</b><span>Government, elections, policy</span></div>
+      <div class="domain">🩺 <b>Health</b><span>Medicine, studies, wellness</span></div>
+      <div class="domain">🎬 <b>Entertainment</b><span>Films, music, celebrities</span></div>
+    </div>
+  </section>
+  <section class="panel">
+    <h2>Evaluation snapshot</h2>
+    <p class="sub">Figures reproduced from the submitted report. The small dataset limits generalization.</p>
+    <div class="bar-row"><span>Politics</span><div class="track"><div class="bar" style="width:71.4%"></div></div><strong>71.4%</strong></div>
+    <div class="bar-row"><span>Health</span><div class="track"><div class="bar" style="width:71.4%"></div></div><strong>71.4%</strong></div>
+    <div class="bar-row"><span>Sports</span><div class="track"><div class="bar" style="width:42.9%"></div></div><strong>42.9%</strong></div>
+    <div class="bar-row"><span>Technology</span><div class="track"><div class="bar" style="width:28.6%"></div></div><strong>28.6%</strong></div>
+    <div class="bar-row"><span>Business</span><div class="track"><div class="bar" style="width:28.6%"></div></div><strong>28.6%</strong></div>
+    <div class="bar-row"><span>Entertainment</span><div class="track"><div class="bar" style="width:14.3%"></div></div><strong>14.3%</strong></div>
+    <p class="notice">Reported leave-one-out evaluation: 18 of 42 articles correct (42.9%). Scores shown by the interactive demo are illustrative and are not the trained model's calibrated probabilities.</p>
+  </section>
+</main>
+<footer>News Article Categorization System · Foundation of Machine Learning · Project demonstration</footer>
+<script>
+const samples={
+sports:"Indi
